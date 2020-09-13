@@ -1,0 +1,230 @@
+Imports System.IO
+Public Class FrmPizzeria
+    Dim vArchivo As New StreamWriter("C:\Users\hp\Desktop\UAA\Segundo Año\Cuarto Semestre\INTRODUCCIÓN A LA PROGRAMACIÓN ORIENTADA POR EVENTOS - VISUAL BASIC\Parcial1_CeciliaSilva\ExamenParcial\Pedidos.txt", True)
+    Private Sub BtnGuardar_Click(sender As Object, e As EventArgs) Handles BtnGuardar.Click
+
+
+        If ValidarDatos() = True Then
+            'Escribimos en memoria
+            EscribirArchivo()
+            MsgBox("Datos guardados correctamente", MsgBoxStyle.Exclamation, "Atención")
+            LimpiarFormulario()
+        End If
+
+
+    End Sub
+    Sub EscribirArchivo()
+        vArchivo.Write("Datos del Pedido")
+        vArchivo.WriteLine()
+        vArchivo.Write("Numero de CI; " & TxtNumeroCi.Text & ",")
+        vArchivo.Write("Cliente ; " & TxtCliente.Text & ",")
+        vArchivo.Write("Dirección ; " & TxtDireccion.Text & ",")
+        vArchivo.Write("Telefóno ; " & TxtTelefono.Text & ",")
+
+        vArchivo.Write("Tipo de Pizza")
+        For Each vcheck As Control In Me.gbxTipoPizza.Controls
+            If TypeOf (vcheck) Is RadioButton Then
+                Dim vc As RadioButton = vcheck
+                If vc.Checked = True Then
+                    vArchivo.Write(vc.Text & ",")
+                End If
+            End If
+        Next
+        vArchivo.Write(",")
+        vArchivo.Write("Ingredientes")
+        For Each vcheck As Control In Me.gbxIngredientes.Controls
+            If TypeOf (vcheck) Is CheckBox Then
+                Dim vc2 As CheckBox = vcheck
+                If vc2.Checked = True Then
+
+                    vArchivo.Write(vc2.Text & ",")
+                End If
+            End If
+        Next
+        vArchivo.Write(",")
+        vArchivo.Write("Total:" & lblTotal.Text)
+
+        vArchivo.Flush()
+    End Sub
+    Sub LimpiarFormulario()
+        TxtNumeroCi.Text = ""
+        TxtCliente.Text = ""
+        TxtDireccion.Text = ""
+        TxtTelefono.Text = ""
+
+        For Each vcheck As Control In Me.gbxTipoPizza.Controls
+            If TypeOf (vcheck) Is CheckBox Then
+                Dim vc As CheckBox = vcheck
+                vc.Checked = False
+
+            End If
+        Next
+        For Each v2check As Control In Me.gbxIngredientes.Controls
+            If TypeOf (v2check) Is RadioButton Then
+                Dim v2c As RadioButton = v2check
+                v2c.Checked = False
+            End If
+        Next
+        lblTotal.Text = 0
+        TxtNumeroCi.Focus()
+    End Sub
+    Function ValidarDatos() As Boolean
+        If TxtNumeroCi.Text = "" Then
+            MsgBox("Debe ingresar el numero de CI del cliente", MsgBoxStyle.Exclamation, "Atención")
+            TxtNumeroCi.Focus()
+            Return False
+        End If
+        If TxtCliente.Text = "" Then
+            MsgBox("Debe ingresar el nombre del cliente", MsgBoxStyle.Exclamation, "Atención")
+            TxtCliente.Focus()
+            Return False
+        End If
+        If TxtDireccion.Text = "" Then
+            MsgBox("Debe ingresar la dirección del cliente", MsgBoxStyle.Exclamation, "Atención")
+            TxtDireccion.Focus()
+            Return False
+        End If
+        If TxtTelefono.Text = "" Then
+            MsgBox("Debe ingresar el teléfono del cliente", MsgBoxStyle.Exclamation, "Atención")
+            TxtTelefono.Focus()
+            Return False
+        End If
+
+        Dim vConTipoPizza As Integer = 0
+        For Each vcheck As Control In Me.gbxTipoPizza.Controls
+            If TypeOf (vcheck) Is RadioButton Then
+                Dim vc As RadioButton = vcheck
+                If vc.Checked = True Then
+                    vConTipoPizza = vConTipoPizza + 1
+                    Return False
+                End If
+            End If
+        Next
+        If vConTipoPizza = 0 Then
+            MsgBox("Debe seleccionar un Tipo de Pizza", MsgBoxStyle.Exclamation, "Atención")
+            RdbMuzarella.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
+
+
+
+    Function Calcular()
+        Dim Total1, Total2 As Double
+        Dim Precio, Respuesta As Integer
+
+        Precio = 2000
+        If RdbMuzarella.Checked = True Then
+            Total1 = +20000
+        End If
+
+        If RdbRomana.Checked = True Then
+            Total1 = +35000
+        End If
+
+        If RdbMargarita.Checked = True Then
+            Total1 = +30000
+        End If
+
+        If RdbHawaiana.Checked = True Then
+            Total1 = +40000
+        End If
+
+        If RdbPrimavera.Checked = True Then
+            Total1 = +35000
+        End If
+        'Para los Ingredientes'
+
+        For Each vcheck As Control In Me.gbxIngredientes.Controls
+            If TypeOf (vcheck) Is CheckBox Then
+                Dim vc As CheckBox = vcheck
+                If vc.Checked = True Then
+                    Total2 = Precio + Total2
+                Else
+                    Total2 = Total2
+                End If
+            End If
+        Next
+
+
+        Respuesta = Total1 + Total2
+
+        Return Respuesta
+    End Function
+    Private Sub BtnCalcularCosto_Click(sender As Object, e As EventArgs) Handles BtnCalcularCosto.Click
+
+        lblTotal.Text = Calcular()
+
+
+        'Dim Total1 As Double = 0
+        'Dim Precio As Integer
+        'Precio = 2000
+        'If RdbMuzarella.Checked = True Then
+        '    Total1 = +20000
+        'End If
+
+        'If RdbRomana.Checked = True Then
+        '    Total1 = +35000
+        'End If
+
+        'If RdbMargarita.Checked = True Then
+        '    Total1 = +30000
+        'End If
+
+        'If RdbHawaiana.Checked = True Then
+        '    Total1 = +40000
+        'End If
+
+        'If RdbPrimavera.Checked = True Then
+        '    Total1 = +35000
+        'End If
+        ''Ingredientes'
+        'Dim total2 As Double
+        'For Each vcheck As Control In Me.gbxIngredientes.Controls
+        '    If TypeOf (vcheck) Is CheckBox Then
+        '        Dim vc As CheckBox = vcheck
+        '        If vc.Checked = True Then
+        '            total2 = Precio + total2
+        '        Else
+        '            total2 = total2
+        '        End If
+        '    End If
+        'Next
+
+
+        'Total1 = Total1 + total2
+        'lblTotal.Text = Total1
+
+        '´' If ChkAtun.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+        ' If ChkChoclo.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+        ' If ChkJamon.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+        ' If ChkPalmitos.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+        ' If ChkPepperoni.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+        ' If ChkPollo.Checked = True Then
+        '     Total1 = Total1 + Precio
+
+        ' End If
+
+    End Sub
+
+
+
+
+End Class
